@@ -17,7 +17,15 @@ class Algo():
         self.cases=cases
     
     def init_tableau(self):
-        pass
+        if len(self.tableau) % 2 == 0:
+            for i in range(1,(len(self.tableau)**2)/4):
+                rand=randint(1,4)
+   
+                
+                
+
+
+
     
     def add_lettre(self):
         pass
