@@ -12,32 +12,37 @@ class Gui():
     
 
 class Algo():
-    def __init__(self, cases):
+    def __init__(self):
         self.tableau=[]
-        self.cases=cases
     
-    def init_tableau(self):
+    def rotation(self):
+        tab = self.tableau
+        for i in range(len(self.tableau)):
+            for j in range(len(self.tableau)):
+                tab[5-j][i], self.tableau[i][j] = self.tableau[i][j], tab[5-j][i]
+        self.tableau = tab
+    
+    def init_tableau(self, cote):
         if len(self.tableau) % 2 == 0:
-            for i in range(1,(len(self.tableau)**2)/4):
-                rand=randint(1,4)
-   
-                
-                
-
-
-
-    
+            for _ in range(cote):
+                self.tableau.append([0] * cote)
+            for i in range((len(self.tableau))//2):
+                for j in range((len(self.tableau))//2):
+                    self.tableau[i][j]=1
+                    rand=randint(1,4)
+                    for _ in range(rand):
+                        self.rotation()
+                    
     def add_lettre(self):
         pass
     
-    def rotation(self):
-        pass
     
 
 def main():
-    jeu=Algo()
     cote=int(input("Nombre de cases par côté du tableau : "))
-    for x in range(cote):
-        for y in range(cote):
-            jeu.tableau[x][y]=0
+    jeu=Algo()
+    jeu.init_tableau(cote)
+    for i in range(len(jeu.tableau)):
+        print(jeu.tableau[i])
     
+main()
