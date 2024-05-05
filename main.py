@@ -1,13 +1,15 @@
 from random import *
 from tkinter import *
+from tkinter import filedialog
+from tkinter import messagebox
 
 class Algo():
     def __init__(self):
         self.tableau=[]
-        self._clock_variable = 0
         self._win = Tk()
         self._win.title("Parametrage")
         self._cote = IntVar()
+        self._clock_variable = 0
 
 
         text = Label(self._win, text="Nombre de cases par côté du tableau : ")
@@ -32,13 +34,13 @@ class Algo():
         
         self._board = Canvas(self._dow, width=600, height=600, bg='black')
         self._board.grid(row=0, column=0)
-        self._button_load = Button(self._dow, text='Load')
+        self._button_load = Button(self._dow, text='Load', command=self.load)
         self._button_load.config(bg="light blue", fg="black", font=("Arial", 8, "bold"), padx=10, pady=5, relief=RAISED)
         self._button_load.place(x=675,y=250)
-        self._button_random = Button(self._dow, text='Random', command=self.init_tableau)
+        self._button_random = Button(self._dow, text='Random', command=self.random)
         self._button_random.config(bg="light blue", fg="black", font=("Arial", 8, "bold"), padx=10, pady=5, relief=RAISED)
         self._button_random.place(x=665,y=285)
-        self._button_save = Button(self._dow, text='Save')
+        self._button_save = Button(self._dow, text='Save', command=self.save)
         self._button_save.config(bg="light blue", fg="black", font=("Arial", 8, "bold"), padx=10, pady=5, relief=RAISED)
         self._button_save.place(x=675,y=320)
         
@@ -51,14 +53,14 @@ class Algo():
         self._button_cipher = Button(self._dow, text='Cipher', command=self.cipher)
         self._button_cipher.config(bg="light blue", fg="black", font=("Arial", 8, "bold"), padx=10, pady=5, relief=RAISED)
         self._button_cipher.place(x=300,y=688)
-        self._button_decipher = Button(self._dow, text='Decipher')
+        self._button_decipher = Button(self._dow, text='Decipher', command=self.decipher)
         self._button_decipher.config(bg="light blue", fg="black", font=("Arial", 8, "bold"), padx=10, pady=5, relief=RAISED)
         self._button_decipher.place(x=375,y=688)
-        self._button_clear = Button(self._dow, text='Clear')
+        self._button_clear = Button(self._dow, text='Clear', command=self.clear)
         self._button_clear.config(bg="light blue", fg="black", font=("Arial", 8, "bold"), padx=10, pady=5, relief=RAISED)
         self._button_clear.place(x=465,y=688)
         
-        self._clock_checkbox = Checkbutton(self._dow, text='Clock',variable= self._clock_variable, onvalue=1, offvalue=0)
+        self._clock_checkbox = Checkbutton(self._dow, text='Clock',command=self.change_clock)
         self._clock_checkbox.place(x=540,y=689)
 
         self._text_decipher = Label(self._dow,text="Cipher")
@@ -68,6 +70,74 @@ class Algo():
 
         self.draw()
         self._dow.mainloop()
+    
+    def change_clock(self):
+        self._clock_variable = 1 - self._clock_variable
+        
+    def random(self):
+        self.init_tableau(self._cote.get())
+        self.draw()
+
+    def clear(self):
+        self._entry_cipher.delete("1.0", END)
+        self._entry_decipher.delete("1.0", END)
+        
+    def save(self):
+        file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt")])
+        with open(file_path, 'w') as f:
+            for ligne in self.tableau:
+                f.write(''.join(map(str, ligne)) + '\n')
+        
+    def load(self):
+        compatible = 0
+        liste=[]
+        file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt")])
+        with open(file_path, 'r') as file:
+            lines = file.readlines()  
+            for line in lines:
+                line = list(line)
+                liste.append(line[:-1])
+        for i in range(len(liste)):
+            for j in range(len(liste[i])):
+                if len(liste) != len(liste[i]):
+                    compatible += 1
+                if liste[i][j] != "0" and liste[i][j] != "1" :
+                    compatible += 1 
+                else :
+                    liste[i][j] = int(liste[i][j])
+        if compatible == 0 :
+            v = len(liste)
+            liste_1=liste
+            liste_2=liste
+            liste_3=liste
+            l=[liste_1, liste_2, liste_3]
+            for k in range(3):
+                for o in range(k+1):
+                    tab = [[0] * v for _ in range(v)]
+                    for m in range(v):
+                        for n in range(v):
+                            tab[n][v-1-m] = l[k][m][n]
+                    l[k] = tab
+            for p in range(len(liste)):
+                for q in range(len(liste)):
+                    liste[p][q] += l[0][p][q]
+                    liste[p][q] += l[1][p][q]
+                    liste[p][q] += l[2][p][q]
+                    if liste[p][q] == 1 :
+                        pass
+                    elif liste[p][q] == 0 and len(liste) % 2 == 1 and p==((len(liste)//2)) and q==((len(liste)//2)):
+                        pass
+                    else :
+                        compatible += 1
+        if compatible > 0 :
+            messagebox.showerror("Error", "Cette clé n'est pas compatible")
+        else :
+            messagebox.showinfo("Succes", "La clé est importée !")
+            self.tableau=l[2]
+            self.rotation_droite()
+            self.draw()
+
+        
 
     def draw(self):
         dim = 500//len(self.tableau)
@@ -97,6 +167,7 @@ class Algo():
 
     
     def init_tableau(self, cote):
+        self.tableau=[]
         for _ in range(cote):
                 self.tableau.append([0] * cote)
         if len(self.tableau) % 2 == 0:
@@ -115,7 +186,8 @@ class Algo():
                         self.rotation_droite()
                     
     def cipher(self):
-        a = "salutcommentcavapersocavaniquelettoi"
+        
+        a = self._entry_cipher.get("1.0", "end-1c")
         a = list(a)
         code = ""
         while len(a) > 0:
@@ -128,23 +200,41 @@ class Algo():
                         if self.tableau[i][j]==1 and len(a) > 0 :
                             tab[i][j]=a[0]
                             a.pop(0)
-                self.rotation_droite()
+                if self._clock_variable == 0 :
+                    self.rotation_gauche()
+                elif self._clock_variable == 1 :
+                    self.rotation_droite()
             for k in range(len(self.tableau)):
                 for l in range(len(self.tableau)):
                     if tab[k][l]!=0:
                         code+=tab[k][l]
-        return code
+        self._entry_decipher.delete("1.0", END)
+        self._entry_decipher.insert(END, code)
     
     def decipher(self):
-        a = "bfcobeeacduomtauypeutasesarenpirpdrtoreqogrgrawaiuirmllemsdiosiknmiltlmgbeietrwashotesunbancardintgobreeqcnauupinetsyacilfonseeitdeoabudpsshlkyrppelcuivieailoyewlshysybacwdcmeujcixmysaeculmnfwsiasuanlvatseedaakniortptwarbxlioordsuztycewulwsioelldgekdeelnbjtiojloeqyctwhtahvvetswoxoxrlheda"
+        a = self._entry_decipher.get("1.0", "end-1c")
         a = list(a)
+        decode = ""
         while len(a) > 0 :
             tab=[]
+            for _ in range(len(self.tableau)):
+                tab.append([0] * len(self.tableau))
+            for i in range(len(self.tableau)):
+                for j in range(len(self.tableau)):
+                    if len(a) > 0 :
+                        tab[i][j]=a[0]
+                        a.pop(0)
+            for _ in range(4):
+                for k in range(len(tab)):
+                    for l in range(len(tab)):
+                        if self.tableau[k][l] == 1 and tab[k][l] != 0:
+                            decode += tab[k][l]
+                if self._clock_variable == 0 :
+                    self.rotation_gauche()
+                elif self._clock_variable == 1 :
+                    self.rotation_droite()
+        self._entry_cipher.delete("1.0", END)
+        self._entry_cipher.insert(END, decode)
             
 
-def main():
-    jeu=Algo()
-    for i in range(len(jeu.tableau)):
-        print(jeu.tableau[i])
-    
-main()
+Algo()
