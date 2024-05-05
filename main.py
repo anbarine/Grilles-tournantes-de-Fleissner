@@ -222,8 +222,11 @@ class Algo():
             for i in range(len(self.tableau)):
                 for j in range(len(self.tableau)):
                     if len(a) > 0 :
-                        tab[i][j]=a[0]
-                        a.pop(0)
+                        if len(self.tableau) % 2 == 1 and i==((len(self.tableau)//2)) and j==((len(self.tableau)//2)) :
+                            pass
+                        else :
+                            tab[i][j]=a[0]
+                            a.pop(0)
             for _ in range(4):
                 for k in range(len(tab)):
                     for l in range(len(tab)):
@@ -236,5 +239,6 @@ class Algo():
         self._entry_cipher.delete("1.0", END)
         self._entry_cipher.insert(END, decode)
             
+
 
 Algo()
