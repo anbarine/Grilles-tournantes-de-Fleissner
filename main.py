@@ -1,19 +1,47 @@
 from random import *
-
-class Gui():
-    def __init__(self):
-        pass
-    
-    def affichage_grille(self):
-        pass
-    
-    def main_gui(self):
-        pass
-    
+from tkinter import *
 
 class Algo():
     def __init__(self):
         self.tableau=[]
+        self._win = Tk()
+        self._win.title("Parametrage")
+        self._cote = IntVar()
+
+
+        text = Label(self._win, text="Nombre de cases par côté du tableau : " )
+        text.grid(row=0, column=0)
+        scale = Scale( self._win, variable = self._cote , from_ = 1, to = 100 , orient = HORIZONTAL )
+        scale.grid(row=1, column=0)
+        self._button_start = Button(self._win, text='Start', command=self.start)
+        self._button_start.grid(row=2, column=0)
+
+        self._win.mainloop()
+
+        
+
+    def start(self):
+        self._cote.get()
+        
+        self._win.destroy()
+        self._dow = Tk()
+        self._dow.title("Grilles_tournantes")
+        self._dow.geometry('700x700')
+        
+        self._board = Canvas(self._dow, width=600, height=600, bg='black')
+        self._board.grid(row=0, column=0)
+
+        self._dow.mainloop()
+
+    def draw(self, cote):
+        dim = 500//len(self.tableau)
+        for i in range(len(self.tableau)):
+            for j in range((len(self.tableau))//2):
+                if self.tableau[i][j]==1:
+                    self._board.create_rectangle(50+dim*i, 50+dim*j, 50+dim*(i+1), 50+dim*(j+1), fill='grey')
+                else:
+                    self._board.create_rectangle(50+dim*i, 50+dim*j, 50+dim*(i+1), 50+dim*(j+1), fill= 'white')
+
     
     def rotation_droite(self):
         n = len(self.tableau)
@@ -43,14 +71,12 @@ class Algo():
                         self.rotation_droite()
                     
     def add_lettre(self):
-        pass
+        pass 
     
     
 
 def main():
-    cote=int(input("Nombre de cases par côté du tableau : "))
     jeu=Algo()
-    jeu.init_tableau(cote)
     for i in range(len(jeu.tableau)):
         print(jeu.tableau[i])
 main()
