@@ -42,10 +42,28 @@ class Algo():
                     for _ in range(rand):
                         self.rotation_droite()
                     
-    def add_lettre(self):
-        pass
-    
-    
+    def cipher(self):
+        a="salutcommentcavapersocavaniquelettoi"
+        a = list(a)
+        code=""
+        while len(a) > 0:
+            tab=[]
+            for _ in range(len(self.tableau)):
+                tab.append([0] * len(self.tableau))
+            for _ in range(4):
+                for i in range(len(self.tableau)):
+                    for j in range(len(self.tableau)):
+                        if self.tableau[i][j]==1 and len(a) > 0 :
+                            tab[i][j]=a[0]
+                            a.pop(0)
+                self.rotation_droite()
+            for k in range(len(self.tableau)):
+                for l in range(len(self.tableau)):
+                    if tab[k][l]!=0:
+                        code+=tab[k][l]
+        return code
+            
+                
 
 def main():
     cote=int(input("Nombre de cases par côté du tableau : "))
@@ -53,4 +71,7 @@ def main():
     jeu.init_tableau(cote)
     for i in range(len(jeu.tableau)):
         print(jeu.tableau[i])
+    code = jeu.cipher()
+    print(code)
+    
 main()
