@@ -50,6 +50,14 @@ class Algo():
             for j in range(n):
                 tab[j][n-1-i] = self.tableau[i][j]
         self.tableau = tab
+        
+    def rotation_gauche(self):
+        n = len(self.tableau)
+        tab = [[0] * n for _ in range(n)]
+        for i in range(n):
+            for j in range(n):
+                tab[n-1-j][i] = self.tableau[i][j]
+        self.tableau = tab
 
     
     def init_tableau(self, cote):
@@ -71,9 +79,9 @@ class Algo():
                         self.rotation_droite()
                     
     def cipher(self):
-        a="salutcommentcavapersocavaniquelettoi"
+        a = "salutcommentcavapersocavaniquelettoi"
         a = list(a)
-        code=""
+        code = ""
         while len(a) > 0:
             tab=[]
             for _ in range(len(self.tableau)):
@@ -90,6 +98,12 @@ class Algo():
                     if tab[k][l]!=0:
                         code+=tab[k][l]
         return code
+    
+    def decipher(self):
+        a = "bfcobeeacduomtauypeutasesarenpirpdrtoreqogrgrawaiuirmllemsdiosiknmiltlmgbeietrwashotesunbancardintgobreeqcnauupinetsyacilfonseeitdeoabudpsshlkyrppelcuivieailoyewlshysybacwdcmeujcixmysaeculmnfwsiasuanlvatseedaakniortptwarbxlioordsuztycewulwsioelldgekdeelnbjtiojloeqyctwhtahvvetswoxoxrlheda"
+        a = list(a)
+        while len(a) > 0 :
+            tab=[]
             
                 
 
